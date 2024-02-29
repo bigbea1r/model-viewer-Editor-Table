@@ -42,7 +42,7 @@ export default class ViewModal {
             this.idHtml.appendChild(button);
         });
     }
-    selTableTop(objectFirst, objectSecond, textureItem) { // textureItem is now a parameter
+    selTableTop(objectFirst, objectSecond, textureItem) {
         objectFirst.material.map = textureItem.texture;
         objectSecond.material.map = textureItem.texture;
     }
@@ -70,16 +70,12 @@ export default class ViewModal {
                     child.visible = false;
                 });
                 console.log("Большой стол");
-                console.log(model1)
-                console.log(modelContainer)
             } else {
                 model1.visible = false;
                 modelContainer.children.forEach(child => {
                     child.visible = true;
                 });
                 console.log("Маленький стол");
-                console.log(model1)
-                console.log(modelContainer)
             }
         };
     }

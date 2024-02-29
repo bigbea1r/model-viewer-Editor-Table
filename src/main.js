@@ -3,7 +3,7 @@ import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 //import ModalConstruct from './constructor.js';
-import ViewModal from './viewmodal.js'; // Добавлено расширение .js
+import ViewModal from './viewmodal.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
@@ -32,24 +32,24 @@ let colorPerple = textureLoader.load('/textures/perple.jpg');
 let doorBrown = textureLoader.load('/textures/door.png');
 let doorSilver = textureLoader.load('/textures/door_silver.png');
 let doorGrey = textureLoader.load('/textures/door_grey.png');
-let screenTexture = textureLoader.load('/textures/Desk_small_screen_base_col.png'); // Добавлен начальный слэш
+let screenTexture = textureLoader.load('/textures/Desk_small_screen_base_col.png'); 
 
 screenTexture.wrapT = THREE.RepeatWrapping;
-screenTexture.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+screenTexture.wrapS = THREE.RepeatWrapping;
 
 metal.wrapT = THREE.RepeatWrapping;
-metal.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+metal.wrapS = THREE.RepeatWrapping;
 colorPerple.wrapT = THREE.RepeatWrapping;
-colorPerple.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+colorPerple.wrapS = THREE.RepeatWrapping;
 colorRed.wrapT = THREE.RepeatWrapping;
-colorRed.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+colorRed.wrapS = THREE.RepeatWrapping;
 
 doorBrown.wrapT = THREE.RepeatWrapping;
-doorBrown.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+doorBrown.wrapS = THREE.RepeatWrapping;
 doorSilver.wrapT = THREE.RepeatWrapping;
-doorSilver.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+doorSilver.wrapS = THREE.RepeatWrapping;
 doorGrey.wrapT = THREE.RepeatWrapping;
-doorGrey.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+doorGrey.wrapS = THREE.RepeatWrapping;
 
 // Создание группы для источников света
 const lightHolder = new THREE.Group();
@@ -103,7 +103,6 @@ renderer.setClearColor('#313131', 1);
 // Загрузка моделей и скрытие прелоадера после загрузки
 const loadPromises = [];
 
-//Элементы столов
 let firstTableBase;
 let firstScreen;
 let firstTableTop;
@@ -124,12 +123,14 @@ loadPromises.push(new Promise((resolve, reject) => {
         (gltf) => {
             const sceneGlb = gltf.scene;
             console.log(sceneGlb);
-
+            //Элементы обычного стола
             firstTableBase = sceneGlb.getObjectByName('Cube018');
             firstScreen = sceneGlb.getObjectByName('Cube018_1');
             firstTableTop = sceneGlb.getObjectByName('Desk_low');
             firstLegs = sceneGlb.getObjectByName('feet_low');
             firstTableBaseScreen = sceneGlb.getObjectByName('upper_frame_low');
+
+            //массивы для построения кнопок
             let texturesTableTop = [
                 { texture: doorBrown, name: "Дерево" },
                 { texture: doorSilver, name: "Серебро" },
@@ -140,8 +141,10 @@ loadPromises.push(new Promise((resolve, reject) => {
             ];
             let table = [];
 
+            //наложение текстуры экранчику
             firstScreen.material.map = screenTexture;
 
+            //Создание группы для обычного стола
             let groupModalFirst = new THREE.Group();
             groupModalFirst.add(firstTableBaseScreen);
             groupModalFirst.add(firstTableBase);
@@ -151,14 +154,14 @@ loadPromises.push(new Promise((resolve, reject) => {
             groupModalFirst.position.y = -0.5;
 
             scene.add(groupModalFirst);
-
+            //Клонирование материалов для обычного стола
             firstTableBase.material = firstTableBase.material.clone();
             firstScreen.material = firstScreen.material.clone();
             firstTableTop.material = firstTableTop.material.clone();
             firstLegs.material = firstLegs.material.clone();
 
             firstScreen.material.map = screenTexture;
-
+            //Настройка высоты стола
             document.getElementById("sizes").onclick = () => {
                 let containers = document.getElementsByClassName("dat-gui-container");
                 viewModal.openMenu(containers)
@@ -167,6 +170,7 @@ loadPromises.push(new Promise((resolve, reject) => {
                 viewModal.settingsPosition(firstTableBase);
                 viewModal.settingsPosition(firstScreen);
             };
+            //Создание большого стола
             gltfLoader.load(
                 '/models/tableBig.glb',
                 (gltf) => {
@@ -177,8 +181,9 @@ loadPromises.push(new Promise((resolve, reject) => {
                     secondTableTop = tableBaseModel.getObjectByName('Desk_low');
                     secondLegs = tableBaseModel.getObjectByName('feet_low');
                     secondTableBaseScreen = tableBaseModel.getObjectByName('upper_frame_low');
-            
-                    groupModalSecond = new THREE.Group(); // Изменено на присваивание, чтобы область видимости вышла за пределы колбэка
+                    
+                    //Создание группы для большого стола
+                    groupModalSecond = new THREE.Group(); 
                     groupModalSecond.visible = false; 
                     groupModalSecond.add(secondTableBaseScreen);
                     groupModalSecond.add(secondTableBase);
@@ -188,7 +193,7 @@ loadPromises.push(new Promise((resolve, reject) => {
                     groupModalSecond.position.y = -0.5;
             
                     scene.add(groupModalSecond);
-            
+                    //Клонирование материалов
                     secondTableBase.material = secondTableBase.material.clone();
                     secondScreen.material = secondScreen.material.clone();
                     secondTableTop.material = secondTableTop.material.clone();
@@ -198,11 +203,14 @@ loadPromises.push(new Promise((resolve, reject) => {
                     secondTableBase.scale.x = 1.2;
                     secondScreen.scale.x = 1.2;
             
+                    //наложение текстуры экранчику
                     secondScreen.material.map = screenTexture;
+                    //Настройка высоты стола
                     viewModal.settingsPosition(secondTableTop);
                     viewModal.settingsPosition(secondTableBase);
                     viewModal.settingsPosition(secondScreen);
-                    console.log(groupModalSecond)
+
+                    //
                     viewModal.createNewModel(groupModalSecond, sceneGlb.parent.children[2]);
             
                     // Обновление массива table, добавляем вторые объекты
