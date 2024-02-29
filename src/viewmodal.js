@@ -1,24 +1,50 @@
 // viewModel.js
 export default class ViewModal {
+
     constructor() {
-        this.objectName = '';
-        //
         this.menu_is_open = 'block';
         this.menu_is_clouse = 'none';
-        this.menuCreated = false;
         this.slider = 'slider';
-        this.state = "state"
+        this.state = "state";
+        this.idHtml = this.idHtml
+
+    }
+    selTableBase(texturesTableTop, objectItem, styleClass, groupModalFirst, groupModalSecond, textureLegs){
+        console.log(objectItem)
+            if (objectItem.first.name === 'Desk_low') {
+                this.buildTextureButtons(texturesTableTop, objectItem.first, objectItem.second, styleClass);
+            } else if (objectItem.first.name === 'feet_low') {
+                groupModalFirst.traverse(object => {
+                    if (object.name === 'feet_low' || object.name === 'Cube018') {
+                        object.material.map = textureLegs;
+                    }
+                });
+                groupModalSecond.traverse(object => {
+                    if (object.name === 'feet_low' || object.name === 'Cube018') {
+                        object.material.map = textureLegs;
+                    }
+                });
+            }
     }
     // Метод для отображения кнопок текстур
-    texturesButtons(textureButtons, object, styleClass) {
-        const selectorTextures = document.getElementById(styleClass);
-        selectorTextures.innerHTML = "";
+    buildTextureButtons(textureButtons, objectFirst, objectSecond, styleClass) {
+        this.idHtml = document.getElementById(styleClass);
+        this.idHtml.innerHTML = "";
+        this.createTextureButtons(textureButtons, objectFirst, objectSecond)
+    }
+    createTextureButtons(textureButtons, objectFirst, objectSecond ){
         textureButtons.forEach(textureItem => {
-            const button = document.createElement("button");
+            let button = document.createElement("button");
             button.textContent = textureItem.name;
-            button.onclick = () => { object.material.map = textureItem.texture; };
-            selectorTextures.appendChild(button);
+            button.onclick = () => 
+            //При клике на кнопку столешницы или основания выдовать массив кнопок свои текстур
+            this.selTableTop(objectFirst, objectSecond, textureItem); 
+            this.idHtml.appendChild(button);
         });
+    }
+    selTableTop(objectFirst, objectSecond, textureItem) { // textureItem is now a parameter
+        objectFirst.material.map = textureItem.texture;
+        objectSecond.material.map = textureItem.texture;
     }
     openMenu(doc){
         for (let i = 0; i < doc.length; i++) {
@@ -36,24 +62,24 @@ export default class ViewModal {
                 doc.style.display = this.menu_is_clouse;
             }
     }
-    createNewModel(model1, model2, modelContainer) {
+    createNewModel(model1, modelContainer) {
         document.getElementById(this.state).onclick = () => {
             if (model1.visible === false) {
                 model1.visible = true;
-                model2.visible = true;
                 modelContainer.children.forEach(child => {
                     child.visible = false;
                 });
-                console.log("Маленькая столешница скрыта");
-                console.log(model1);
+                console.log("Большой стол");
+                console.log(model1)
+                console.log(modelContainer)
             } else {
                 model1.visible = false;
-                model2.visible = false;
                 modelContainer.children.forEach(child => {
                     child.visible = true;
                 });
-                console.log("Большая столешница скрыта");
-                console.log(model1);
+                console.log("Маленький стол");
+                console.log(model1)
+                console.log(modelContainer)
             }
         };
     }

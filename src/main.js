@@ -2,8 +2,8 @@
 import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import ModalConstruct from './constructor.js';
-import ViewModal from './viewmodal';
+//import ModalConstruct from './constructor.js';
+import ViewModal from './viewmodal.js'; // Добавлено расширение .js
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
@@ -32,11 +32,24 @@ let colorPerple = textureLoader.load('/textures/perple.jpg');
 let doorBrown = textureLoader.load('/textures/door.png');
 let doorSilver = textureLoader.load('/textures/door_silver.png');
 let doorGrey = textureLoader.load('/textures/door_grey.png');
-let root = textureLoader.load('/textures/Desk_main_body_Color.png');
-let screenTexture = textureLoader.load('textures/Desk_small_screen_base_col.png');
+let screenTexture = textureLoader.load('/textures/Desk_small_screen_base_col.png'); // Добавлен начальный слэш
 
 screenTexture.wrapT = THREE.RepeatWrapping;
-screenTexture.wraps = THREE.RepeatWrapping;
+screenTexture.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+
+metal.wrapT = THREE.RepeatWrapping;
+metal.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+colorPerple.wrapT = THREE.RepeatWrapping;
+colorPerple.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+colorRed.wrapT = THREE.RepeatWrapping;
+colorRed.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+
+doorBrown.wrapT = THREE.RepeatWrapping;
+doorBrown.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+doorSilver.wrapT = THREE.RepeatWrapping;
+doorSilver.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
+doorGrey.wrapT = THREE.RepeatWrapping;
+doorGrey.wrapS = THREE.RepeatWrapping; // Исправлено свойство wraps на wrapS
 
 // Создание группы для источников света
 const lightHolder = new THREE.Group();
@@ -90,6 +103,20 @@ renderer.setClearColor('#313131', 1);
 // Загрузка моделей и скрытие прелоадера после загрузки
 const loadPromises = [];
 
+//Элементы столов
+let firstTableBase;
+let firstScreen;
+let firstTableTop;
+let firstLegs;
+let firstTableBaseScreen;
+
+let secondTableBase;
+let secondScreen;
+let secondTableTop;
+let secondLegs;
+let secondTableBaseScreen
+
+let groupModalSecond
 // Загрузка модели стола
 loadPromises.push(new Promise((resolve, reject) => {
     gltfLoader.load(
@@ -98,107 +125,106 @@ loadPromises.push(new Promise((resolve, reject) => {
             const sceneGlb = gltf.scene;
             console.log(sceneGlb);
 
-            let tableBase = sceneGlb.getObjectByName('Cube018');
-            let screen = sceneGlb.getObjectByName('Cube018_1');
-            let tableTop = sceneGlb.getObjectByName('Desk_low');
-            let legs = sceneGlb.getObjectByName('feet_low');
-            let tableBaseScreen = sceneGlb.getObjectByName('upper_frame_low');
-
+            firstTableBase = sceneGlb.getObjectByName('Cube018');
+            firstScreen = sceneGlb.getObjectByName('Cube018_1');
+            firstTableTop = sceneGlb.getObjectByName('Desk_low');
+            firstLegs = sceneGlb.getObjectByName('feet_low');
+            firstTableBaseScreen = sceneGlb.getObjectByName('upper_frame_low');
             let texturesTableTop = [
                 { texture: doorBrown, name: "Дерево" },
                 { texture: doorSilver, name: "Серебро" },
                 { texture: doorGrey, name: "Серый" },
-            ];
-            let texturesTableLegs = [
                 { texture: metal, name: "Металл" },
                 { texture: colorPerple, name: "Фиолетовый" },
                 { texture: colorRed, name: "Бордовый" },
             ];
-            let objects = [
-                { object: tableTop, name: "Столешница" },
-                { object: legs, name: "Ножки основания" },
-            ];
+            let table = [];
 
-            screen.material.map = screenTexture;
+            firstScreen.material.map = screenTexture;
 
-            let groupModal = new THREE.Group();
-            groupModal.add(tableBaseScreen);
-            groupModal.add(tableBase);
-            groupModal.add(screen);
-            groupModal.add(tableTop);
-            groupModal.add(legs);
-            groupModal.position.y = -0.5;
+            let groupModalFirst = new THREE.Group();
+            groupModalFirst.add(firstTableBaseScreen);
+            groupModalFirst.add(firstTableBase);
+            groupModalFirst.add(firstScreen);
+            groupModalFirst.add(firstTableTop);
+            groupModalFirst.add(firstLegs);
+            groupModalFirst.position.y = -0.5;
 
-            scene.add(groupModal);
+            scene.add(groupModalFirst);
 
-            tableBase.material = tableBase.material.clone();
-            screen.material = screen.material.clone();
-            tableTop.material = tableTop.material.clone();
-            legs.material = legs.material.clone();
+            firstTableBase.material = firstTableBase.material.clone();
+            firstScreen.material = firstScreen.material.clone();
+            firstTableTop.material = firstTableTop.material.clone();
+            firstLegs.material = firstLegs.material.clone();
 
-            screen.material.map = screenTexture;
+            firstScreen.material.map = screenTexture;
 
             document.getElementById("sizes").onclick = () => {
                 let containers = document.getElementsByClassName("dat-gui-container");
                 viewModal.openMenu(containers)
 
-                viewModal.settingsPosition(tableTop);
-                viewModal.settingsPosition(tableBase);
-                viewModal.settingsPosition(screen);
+                viewModal.settingsPosition(firstTableTop);
+                viewModal.settingsPosition(firstTableBase);
+                viewModal.settingsPosition(firstScreen);
             };
-
-            document.getElementById("textures").onclick = () => {
-                let elemProduct = document.getElementById("elem_product");
-                viewModal.openMenu1(elemProduct)
-                elemProduct.innerHTML = "";
-
-                objects.forEach(objectItem => {
-                    const button = document.createElement("button");
-                    button.textContent = objectItem.name;
-                    button.onclick = () => {
-                        if (objectItem.object.name === 'Desk_low') {
-                            viewModal.texturesButtons(texturesTableTop, objectItem.object, "selector_textures");
-                        } else if (objectItem.object.name === 'feet_low') {
-                            groupModal.traverse(object => {
-                                if (object instanceof THREE.Mesh && (object.name === 'feet_low' || object.name === 'Cube018')) {
-                                    object.material.map = metal;
-                                }
-                            });
-                        }
-                    };
-                    elemProduct.appendChild(button);
-                });
-            };
-
             gltfLoader.load(
-                '/models/tableBase.glb',
+                '/models/tableBig.glb',
                 (gltf) => {
                     const tableBaseModel = gltf.scene;
                     tableBaseModel.visible = false;
-                    tableBaseModel.position.y = -0.5;
-                    let secondTableBase = tableBaseModel.getObjectByName('Cube018');
-                    let secondScreen = tableBaseModel.getObjectByName('Cube018_1');
-                    let secondTableTop = tableBaseModel.getObjectByName('Desk_low');
+                    secondTableBase = tableBaseModel.getObjectByName('Cube018');
+                    secondScreen = tableBaseModel.getObjectByName('Cube018_1');
+                    secondTableTop = tableBaseModel.getObjectByName('Desk_low');
+                    secondLegs = tableBaseModel.getObjectByName('feet_low');
+                    secondTableBaseScreen = tableBaseModel.getObjectByName('upper_frame_low');
+            
+                    groupModalSecond = new THREE.Group(); // Изменено на присваивание, чтобы область видимости вышла за пределы колбэка
+                    groupModalSecond.visible = false; 
+                    groupModalSecond.add(secondTableBaseScreen);
+                    groupModalSecond.add(secondTableBase);
+                    groupModalSecond.add(secondScreen);
+                    groupModalSecond.add(secondTableTop);
+                    groupModalSecond.add(secondLegs);
+                    groupModalSecond.position.y = -0.5;
+            
+                    scene.add(groupModalSecond);
+            
+                    secondTableBase.material = secondTableBase.material.clone();
+                    secondScreen.material = secondScreen.material.clone();
+                    secondTableTop.material = secondTableTop.material.clone();
+                    secondLegs.material = secondLegs.material.clone();
+            
+                    //Растянул основание с экранчиком. Аля костыль
+                    secondTableBase.scale.x = 1.2;
+                    secondScreen.scale.x = 1.2;
+            
                     secondScreen.material.map = screenTexture;
                     viewModal.settingsPosition(secondTableTop);
                     viewModal.settingsPosition(secondTableBase);
                     viewModal.settingsPosition(secondScreen);
-
-                    gltfLoader.load(
-                        '/models/tableTop.glb',
-                        (gltf) => {
-                            const tableTopModel = gltf.scene;
-                            tableTopModel.visible = false;
-                            tableTopModel.position.y = -0.5;
-
-                            viewModal.createNewModel(tableBaseModel, tableTopModel, sceneGlb.parent.children[2]);
-
-                            let firstTableTop = tableTopModel.getObjectByName('Desk_low');
-                            viewModal.settingsPosition(firstTableTop);
-                            scene.add(tableTopModel);
-                        });
+                    console.log(groupModalSecond)
+                    viewModal.createNewModel(groupModalSecond, sceneGlb.parent.children[2]);
+            
+                    // Обновление массива table, добавляем вторые объекты
+                    table.push(
+                        { object: { first: firstTableTop, second: secondTableTop }, name: "Столешница" },
+                        { object: { first: firstLegs, second: secondLegs }, name: "Ножки основания" }
+                    );
                     scene.add(tableBaseModel);
                 });
+                document.getElementById("textures").onclick = () => {
+                    const elemProduct = document.getElementById("elem_product");
+                    viewModal.openMenu1(elemProduct);
+                    elemProduct.innerHTML = "";
+                
+                    table.forEach(objectItem => {
+                        const button = document.createElement("button");
+                        button.textContent = objectItem.name;
+                        button.onclick = () => viewModal.selTableBase(texturesTableTop, objectItem.object, "selector_textures", groupModalFirst, groupModalSecond, metal);
+                        elemProduct.appendChild(button);
+                    });
+                };
+                
             scene.add(sceneGlb);
 
             resolve();
