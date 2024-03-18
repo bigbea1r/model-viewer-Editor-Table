@@ -1,13 +1,12 @@
+const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
-const path = require('path')
 
 module.exports = {
     entry: path.resolve(__dirname, '../src/main.js'),
     output:
     {
-        //filename: 'main.js'
          filename: 'bundle.[contenthash].js',
          path: path.resolve(__dirname, '../dist')
     },
@@ -21,7 +20,8 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, '../src/index.html'),
-            minify: true
+            minify: true,
+            scriptLoading: 'async'
         }),
         new MiniCSSExtractPlugin()
     ],

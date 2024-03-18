@@ -1,3 +1,17 @@
+
+*{
+  margin:0;
+  padding: 0;
+  box-sizing: border-box;
+}
+#ar-prompt{
+  display:none
+}
+model-viewer{
+  width: 100%;
+  height: 100vh;
+  z-index: 1px;
+}
 html,body
 {
   margin: 0px;
@@ -40,7 +54,7 @@ html,body
   border-radius: 50%;
   cursor: pointer;
 }
-.loader-container {
+/* .loader-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -53,8 +67,8 @@ html,body
 .loader {
   width: 50%;
   height: 4px;
-  background: linear-gradient(to right, #A204E8, #E92A6E, #E94309); /* градиентная линия */
-  animation: moveRight 4s linear infinite; /* анимация движения вправо */
+  background: linear-gradient(to right, #A204E8, #E92A6E, #E94309); 
+  animation: moveRight 4s linear infinite; 
 }
 
 @keyframes moveRight {
@@ -64,7 +78,7 @@ html,body
   100% {
       transform: translateX(100%);
   }
-}
+} */
 
 .disp {
     display: block;
