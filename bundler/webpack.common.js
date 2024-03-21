@@ -1,18 +1,25 @@
-const path = require('path')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
+const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
+// const { WebpackGLTFLoaderPlugin } = require('gltf-webpack-loader');
 
 module.exports = {
     entry: path.resolve(__dirname, '../src/main.js'),
-    output:
-    {
-         filename: 'bundle.[contenthash].js',
-         path: path.resolve(__dirname, '../dist')
+    output: {
+        filename: 'bundle.[contenthash].js',
+        path: path.resolve(__dirname, '../dist')
     },
     devtool: 'source-map',
-    plugins:
-    [
+    resolve: {
+        extensions: ['.js', '.json'],
+        alias: {
+            '@google/model-viewer': path.resolve(__dirname, '../node_modules/@google/model-viewer/dist/model-viewer.js'),
+            'three': path.resolve(__dirname, '../node_modules/three/build/three.module.js'),
+            // 'gltfLoader': path.resolve(__dirname, '../node_modules/three/examples/js/loaders/GLTFLoader.js') // Алиас для локального GLTFLoader
+        }
+    },
+    plugins: [
         new CopyWebpackPlugin({
             patterns: [
                 { from: path.resolve(__dirname, '../static') }
@@ -21,14 +28,13 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, '../src/index.html'),
             minify: true,
-            scriptLoading: 'async'
+            scriptLoading: 'defer'
         }),
-        new MiniCSSExtractPlugin()
+        new MiniCSSExtractPlugin(),
+        // new WebpackGLTFLoaderPlugin() // Добавление плагина gltf-loader
     ],
-    module:
-    {
-        rules:
-        [
+    module: {
+        rules: [
             // HTML
             {
                 test: /\.(html)$/,
@@ -39,8 +45,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                use:
-                [
+                use: [
                     'babel-loader'
                 ]
             },
@@ -48,22 +53,32 @@ module.exports = {
             // CSS
             {
                 test: /\.css$/,
-                use:
-                [
+                use: [
                     MiniCSSExtractPlugin.loader,
                     'css-loader'
                 ]
             },
 
+            // GLTF
+            // {
+            //     test: /\.(gltf)$/,
+            //     use: [
+            //         {
+            //             loader: 'file-loader',
+            //             options: {
+            //                 outputPath: 'assets/models/'
+            //             }
+            //         }
+            //     ]
+            // },
+
             // Images
             {
                 test: /\.(jpg|png|gif|svg)$/,
-                use:
-                [
+                use: [
                     {
                         loader: 'file-loader',
-                        options:
-                        {
+                        options: {
                             outputPath: 'assets/images/'
                         }
                     }
@@ -73,17 +88,18 @@ module.exports = {
             // Fonts
             {
                 test: /\.(ttf|eot|woff|woff2)$/,
-                use:
-                [
+                use: [
                     {
                         loader: 'file-loader',
-                        options:
-                        {
+                        options: {
                             outputPath: 'assets/fonts/'
                         }
                     }
                 ]
             }
         ]
+    },
+    experiments: {
+        topLevelAwait: true,
     }
-}
+};
