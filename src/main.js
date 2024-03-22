@@ -2,7 +2,8 @@ import './style.css';
 import { ModelViewerElement } from '@google/model-viewer';
 import * as THREE from 'three';
 import ViewModal from './viewmodal.js';
-
+import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+// import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 // Функция для изменения URL модели
 setTimeout(() => {          
     // Создаем один экземпляр <model-viewer>
@@ -65,7 +66,18 @@ setTimeout(() => {
 // Добавляем элемент <model-viewer> на страницу
 document.body.appendChild(viewer);
 const sceneGlb = viewer[Object.getOwnPropertySymbols(viewer).find(e => e.description === 'scene')]
+let gltfLoader = new GLTFLoader();
+console.log(gltfLoader)
+gltfLoader.load(
+  '/models/tableBig.glb',
+  (gltf) => {
+    const sceneTableBig = gltf.scene
+      console.log(sceneTableBig);
+      let firstTableBase = sceneTableBig.getObjectByName('Cube018');
+      firstTableBase.position.x = 0.5;
+  });
 console.log(sceneGlb)
+
 
 const loadPromises = [];
 
