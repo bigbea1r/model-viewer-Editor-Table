@@ -62,19 +62,23 @@ export default class ViewModal {
                 doc.style.display = this.menu_is_clouse;
             }
     }
-    createNewModel(model1, modelContainer) {
+    createNewModel(model1, model2) {
         document.getElementById(this.state).onclick = () => {
-            if (model1.visible === false) {
-                model1.visible = true;
-                modelContainer.children.forEach(child => {
+            if (model2.visible === false) {
+                model2.visible = true;
+                model1.children.forEach(child => {
                     child.visible = false;
                 });
+                console.log(model1)
+                console.log(model2)
                 console.log("Большой стол");
             } else {
-                model1.visible = false;
-                modelContainer.children.forEach(child => {
+                model2.visible = false;
+                model1.children.forEach(child => {
                     child.visible = true;
                 });
+                console.log(model1)
+                console.log(model2)
                 console.log("Маленький стол");
             }
         };
